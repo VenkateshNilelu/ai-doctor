@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Doctor - Medical Diagnosis & Prescription Support</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-user-md"></i>
+                <h1 data-i18n="app.title">AI Doctor</h1>
+            </div>
+            <p class="subtitle" data-i18n="app.subtitle">Medical Diagnosis & Prescription Support System</p>
+            <div class="lang-switcher" aria-label="Language selector">
+                <button type="button" class="lang-btn" data-lang="en" aria-label="English">EN</button>
+                <button type="button" class="lang-btn" data-lang="hi" aria-label="Hindi">हिं</button>
+                <button type="button" class="lang-btn" data-lang="mr" aria-label="Marathi">मरा</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Patient Form Section -->
+            <section class="form-section" id="formSection">
+                <div class="form-container">
+                    <h2><i class="fas fa-clipboard-list"></i> <span data-i18n="form.title">Patient Information</span>
+                        <span class="kb-indicator" id="kbIndicator" title="Current keyboard input">ENG</span>
+                    </h2>
+                    <p class="input-hint" data-i18n="form.inputHint">Tip: Switch your keyboard language (e.g., Windows + Space) to type in the selected language.</p>
+                    <form id="patientForm" class="patient-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName" data-i18n="form.fullName.label">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" required placeholder="" data-i18n-placeholder="form.fullName.placeholder">
+                            </div>
+                            <div class="form-group">
+                                <label for="age" data-i18n="form.age.label">Age (years) *</label>
+                                <input type="number" id="age" name="age" min="0" max="120" required placeholder="" data-i18n-placeholder="form.age.placeholder">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="sex" data-i18n="form.sex.label">Sex *</label>
+                                <select id="sex" name="sex" required>
+                                    <option value="" data-i18n="form.sex.placeholder">Select Sex</option>
+                                    <option value="male" data-i18n="form.sex.male">Male</option>
+                                    <option value="female" data-i18n="form.sex.female">Female</option>
+                                    <option value="other" data-i18n="form.sex.other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="weight" data-i18n="form.weight.label">Weight (kg) *</label>
+                                <input type="number" id="weight" name="weight" min="0.5" max="500" step="0.1" required placeholder="" data-i18n-placeholder="form.weight.placeholder">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="allergies" data-i18n="form.allergies.label">Allergies (if any)</label>
+                            <textarea id="allergies" name="allergies" placeholder="List any known allergies, or leave blank if none" data-i18n-placeholder="form.allergies.placeholder"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="symptoms" data-i18n="form.symptoms.label">Symptoms Description *</label>
+                            <textarea id="symptoms" name="symptoms" placeholder="Describe your symptoms in detail..." required rows="4" data-i18n-placeholder="form.symptoms.placeholder"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-stethoscope"></i>
+                                <span data-i18n="buttons.generate">Generate Diagnosis</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                <i class="fas fa-eraser"></i>
+                                <span data-i18n="buttons.clear">Clear Form</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Loading Section -->
+            <section class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <h3 data-i18n="loading.title">Analyzing Symptoms...</h3>
+                    <p data-i18n="loading.subtitle">Our AI is processing your information and generating a medical assessment.</p>
+                    <div class="loading-steps">
+                        <div class="step active">
+                            <i class="fas fa-check-circle"></i>
+                            <span data-i18n="loading.step1">Analyzing symptoms</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-brain"></i>
+                            <span data-i18n="loading.step2">AI diagnosis</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-pills"></i>
+                            <span data-i18n="loading.step3">Medication review</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-file-medical"></i>
+                            <span data-i18n="loading.step4">Generating prescription</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2><i class="fas fa-file-medical"></i> <span data-i18n="results.title">AI Diagnosis Results</span></h2>
+                        <div class="confidence-badge" id="confidenceBadge">
+                            <i class="fas fa-chart-line"></i>
+                            <span id="confidenceText" data-i18n="results.confidence" data-i18n-append=": --%">Confidence</span>
+                        </div>
+                    </div>
+
+                    <div class="emergency-warning" id="emergencyWarning" style="display: none;">
+                        <div class="warning-content">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <h3 data-i18n="emergency.title">🚨 EMERGENCY WARNING</h3>
+                                <p data-i18n="emergency.message">This case requires immediate medical attention. Please seek emergency care immediately.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prescription-content" id="prescriptionContent">
+                        <!-- Prescription content will be inserted here -->
+                    </div>
+
+                    <div class="results-actions">
+                        <button class="btn btn-success" id="downloadBtn">
+                            <i class="fas fa-download"></i>
+                            <span data-i18n="buttons.download">Download Prescription (PDF)</span>
+                        </button>
+                        <button class="btn btn-secondary" id="newDiagnosisBtn">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="buttons.new">New Diagnosis</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="disclaimer">
+                    <h4 data-i18n="footer.disclaimer.title">⚠️ Important Disclaimer</h4>
+                    <p data-i18n="footer.disclaimer.text">This AI system provides informational support only and does not replace professional medical advice. Always consult qualified healthcare providers for diagnosis and treatment.</p>
+                </div>
+                <div class="footer-links">
+                    <p data-i18n="footer.copyright">© 2024 AI Doctor. Built with ❤️ for better healthcare access.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
